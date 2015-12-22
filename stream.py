@@ -10,12 +10,14 @@ class TweetsStreamListener(tweepy.StreamListener):
 		print("Connected to stream")
 
 	def on_status(self, status):
-		for chat_id in common.subscribers:
-			common.bot.sendMessage(chat_id, "@{screen_name}: {text}".format(screen_name=status.user.screen_name, text=status.text))
-		try:
-			print("{screen_name}: {text}".format(screen_name=status.user.screen_name, text=status.text))
-		except UnicodeEncodeError:
-			pass
+		if not hasattr(status, 'retweeted_status'):
+			for chat_id in common.subscribers:
+				common.bot.sendMessage(chat_id, "@{screen_name}: {text}".format(screen_name=status.user.screen_name, text=status.text))
+
+			try:
+				print("{screen_name}: {text}".format(screen_name=status.user.screen_name, text=status.text))
+			except UnicodeEncodeError:
+				pass
 
 
 	def on_error(self, status_code):
